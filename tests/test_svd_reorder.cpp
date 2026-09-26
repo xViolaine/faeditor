@@ -2,6 +2,7 @@
 
 #include <QFile>
 #include <QRandomGenerator>
+#include <QTemporaryDir>
 #include <QtEndian>
 #include <QtTest>
 
@@ -222,6 +223,42 @@ private slots:
         QVector<int> notPerm = order;
         notPerm[0] = notPerm[1];
         QVERIFY(applyOrder(b, notPerm, nullptr, &err).isEmpty());
+    }
+
+    void saveWritesSvdAndBinPair()
+    {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString src = dir.filePath(QStringLiteral("031026.SVD"));
+        QFile out(src);
+        QVERIFY(out.open(QIODevice::WriteOnly));
+        out.write(makeBackup());
+        out.close();
+        QByteArray origBin(1024, '\0');
+        origBin[7] = 0x42; // prove the original .BIN is copied, not regenerated
+        QFile ob(dir.filePath(QStringLiteral("031026.BIN")));
+        QVERIFY(ob.open(QIODevice::WriteOnly));
+        ob.write(origBin);
+        ob.close();
+
+        SvdStudioSetOrderModel m;
+        QVERIFY(m.loadFile(QUrl::fromLocalFile(src)));
+        QVERIFY(!m.saveFile(QUrl::fromLocalFile(src))); // never overwrite the original
+        QVERIFY(m.swap(0, 1));
+        QVERIFY2(m.saveFile(QUrl::fromLocalFile(dir.filePath(QStringLiteral("RE031026.SVD")))),
+                 qPrintable(m.lastError()));
+        QFile bin(dir.filePath(QStringLiteral("RE031026.BIN")));
+        QVERIFY(bin.open(QIODevice::ReadOnly));
+        QCOMPARE(bin.readAll(), origBin);
+
+        // Without an original .BIN next to the source, 1024 zero bytes are written.
+        SvdStudioSetOrderModel m2;
+        QVERIFY(m2.loadData(makeBackup(), QStringLiteral("x.svd")));
+        QVERIFY(m2.swap(0, 1));
+        QVERIFY(m2.saveFile(QUrl::fromLocalFile(dir.filePath(QStringLiteral("test.svd")))));
+        QFile bin2(dir.filePath(QStringLiteral("test.bin")));
+        QVERIFY(bin2.open(QIODevice::ReadOnly));
+        QCOMPARE(bin2.readAll(), QByteArray(1024, '\0'));
     }
 
     // Optional: FAEDITOR_SVD_FIXTURE=/path/to/backup.SVD runs against a real FA backup.

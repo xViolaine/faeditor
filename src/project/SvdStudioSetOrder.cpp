@@ -474,6 +474,44 @@ QByteArray SvdStudioSetOrderModel::buildResult(QString *error, int *favoritesUpd
     return out;
 }
 
+namespace {
+
+// The FA stores each backup as a pair: NAME.SVD plus NAME.BIN. Restore fails
+// with a read error when the .BIN partner is missing.
+QString companionBinPath(const QString &svdPath)
+{
+    const QFileInfo fi(svdPath);
+    const bool lower = fi.suffix() == fi.suffix().toLower() && !fi.suffix().isEmpty()
+                       && fi.suffix() != fi.suffix().toUpper();
+    return fi.dir().filePath(fi.completeBaseName() + (lower ? QStringLiteral(".bin") : QStringLiteral(".BIN")));
+}
+
+QString existingCompanionBin(const QString &svdPath)
+{
+    const QFileInfo fi(svdPath);
+    for (const QString &ext : {QStringLiteral(".BIN"), QStringLiteral(".bin"), QStringLiteral(".Bin")}) {
+        const QString p = fi.dir().filePath(fi.completeBaseName() + ext);
+        if (QFileInfo::exists(p))
+            return p;
+    }
+    return {};
+}
+
+} // namespace
+
+QByteArray SvdStudioSetOrderModel::companionBinData() const
+{
+    // Use the original backup's .BIN when it sits next to the .SVD.
+    const QString src = m_sourcePath.isEmpty() ? QString() : existingCompanionBin(m_sourcePath);
+    if (!src.isEmpty()) {
+        QFile f(src);
+        if (f.open(QIODevice::ReadOnly) && f.size() <= 1024 * 1024)
+            return f.readAll();
+    }
+    // Every FA backup observed so far pairs the .SVD with 1024 zero bytes.
+    return QByteArray(1024, '\0');
+}
+
 bool SvdStudioSetOrderModel::saveFile(const QUrl &url)
 {
     const QString path = url.isLocalFile() ? url.toLocalFile() : url.toString();
@@ -488,15 +526,26 @@ bool SvdStudioSetOrderModel::saveFile(const QUrl &url)
         setError(err);
         return false;
     }
+    const QString binPath = companionBinPath(path);
+    if (QFileInfo(binPath).completeBaseName().size() > 8)
+        qWarning("FA backup names longer than 8 characters may not be listed on the FA");
+    const QByteArray bin = companionBinData();
     QSaveFile f(path);
     if (!f.open(QIODevice::WriteOnly) || f.write(out) != out.size() || !f.commit()) {
         setError(QStringLiteral("Could not write %1.").arg(QFileInfo(path).fileName()));
         return false;
     }
+    QSaveFile b(binPath);
+    if (!b.open(QIODevice::WriteOnly) || b.write(bin) != bin.size() || !b.commit()) {
+        setError(QStringLiteral("Could not write %1 (the FA needs it next to the .SVD).")
+                     .arg(QFileInfo(binPath).fileName()));
+        return false;
+    }
     setError({});
-    setStatus(QStringLiteral("Saved %1 · %2 slots changed, %3 favorite(s) updated. "
-                             "Copy it to the SD card and Restore it on the FA.")
+    setStatus(QStringLiteral("Saved %1 + %2 · %3 slots changed, %4 favorite(s) updated. "
+                             "Copy BOTH files to the SD card and Restore on the FA.")
                   .arg(QFileInfo(path).fileName())
+                  .arg(QFileInfo(binPath).fileName())
                   .arg(changedCount())
                   .arg(favorites));
     return true;

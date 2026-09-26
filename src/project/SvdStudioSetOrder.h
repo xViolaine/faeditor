@@ -121,6 +121,8 @@ public:
     Q_INVOKABLE void reset();
     Q_INVOKABLE bool saveFile(const QUrl &url);
     QByteArray buildResult(QString *error, int *favoritesUpdated = nullptr) const;
+    /** Contents for the NAME.BIN file the FA expects next to every NAME.SVD backup. */
+    QByteArray companionBinData() const;
 
     const QVector<int> &order() const { return m_newToOld; }
 

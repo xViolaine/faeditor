@@ -67,8 +67,10 @@ rearranged in an SD-card backup instead:
 2. **File → Reorder User Studio Sets (SVD Backup)…**, open the backup, then drag sets
    by their ≡ handle, use ▲/▼ (Alt+Up/Down), **Move** or **Swap** to a slot number,
    or **Used Sets to Top** to close gaps.
-3. **Save Reordered Backup…** writes a *new* file (default `REORDER.SVD`). Copy it to
-   the backup folder on the SD card and use Restore on the FA.
+3. **Save Reordered Backup…** writes a *new* backup pair (default `REORDER.SVD` plus
+   `REORDER.BIN`). Copy **both** files to the backup folder on the SD card and use
+   Restore on the FA — the FA reports a read error if the `.BIN` partner is missing.
+   Keep names to 8 characters.
 
 Only whole records are moved: each Studio Set together with its per-slot companion
 record, and Favorites that point at a User Studio Set are renumbered to follow it.

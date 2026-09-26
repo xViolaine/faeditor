@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /home/claude/out)",
+      "Bash(cp /root/.claude/uploads/2e571e4a-f2c5-54db-823f-9997e2f034ce/bdd2d48e-1790464811821_RE031026.SVD /home/claude/out/RE031026.SVD)",
+      "Bash(cp /root/.claude/uploads/2e571e4a-f2c5-54db-823f-9997e2f034ce/7bd2e7f8-031026.BIN /home/claude/out/RE031026.BIN)",
+      "Bash(git add *)"
+    ]
+  }
+}

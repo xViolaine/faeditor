@@ -67,7 +67,7 @@ Dialog {
         title: "Reordered backup saved"
         text: root.order.statusText
         informativeText: "To apply it on the FA:\n"
-            + "1. Copy the new file into the same backup folder on the SD card as your original backup.\n"
+            + "1. Copy BOTH new files (.SVD and .BIN with the same name) into the same backup folder on the SD card as your original backup.\n"
             + "2. On the FA, open the Restore function in the Utility menu and choose the new file.\n"
             + "3. Keep your original backup file: restoring it puts everything back as it was."
     }
