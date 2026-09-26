@@ -45,5 +45,5 @@ QtObject {
     readonly property int fontSize: mobile ? 15 : 13
     readonly property int fontSizeSmall: mobile ? 13 : 11
     readonly property int fontSizeTitle: mobile ? 16 : 13
-    readonly property string fontFamily: ".AppleSystemUIFont"
+    readonly property string fontFamily: Qt.platform.os === "windows" ? "Segoe UI" : ".AppleSystemUIFont"
 }

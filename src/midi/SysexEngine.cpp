@@ -2,6 +2,7 @@
 #include "midi/RolandChecksum.h"
 
 #include <RtMidi.h>
+#include "midi/MidiApi.h"
 #include <QThread>
 #include <QDateTime>
 #include <QDebug>
@@ -28,8 +29,8 @@ bool SysexEngine::openPorts(int inIndex, int outIndex, QString *error)
     try {
         static std::atomic<int> clientSerial{0};
         const auto clientName = std::string("FAEditor-") + std::to_string(++clientSerial);
-        m_in = std::make_unique<RtMidiIn>(RtMidi::MACOSX_CORE, clientName);
-        m_out = std::make_unique<RtMidiOut>(RtMidi::MACOSX_CORE, clientName + "-out");
+        m_in = std::make_unique<RtMidiIn>(faeditor::midiApi(), clientName);
+        m_out = std::make_unique<RtMidiOut>(faeditor::midiApi(), clientName + "-out");
         m_in->ignoreTypes(false, false, false);
         m_in->setCallback(&SysexEngine::rtMidiCallback, this);
         m_in->openPort(static_cast<unsigned int>(inIndex), "FAEditor In");

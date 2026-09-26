@@ -2,6 +2,7 @@
 #include "midi/SysexEngine.h"
 
 #include <RtMidi.h>
+#include "midi/MidiApi.h"
 
 using namespace roland;
 
@@ -20,6 +21,7 @@ bool RolandFAPlatform::nameIsDawControl(const QString &name)
 {
     const auto n=name.toLower();
     return n.contains(QStringLiteral("daw")) || n.contains(QStringLiteral("mackie"))
+           || n.startsWith(QStringLiteral("midiin2")) || n.startsWith(QStringLiteral("midiout2"))
            || (n.contains(QStringLiteral("ctrl")) && !n.contains(QStringLiteral("controller")));
 }
 
@@ -37,7 +39,7 @@ bool RolandFAPlatform::discoverMidiPorts(QVector<MidiPort> *inputs,QVector<MidiP
 {
     if (inputs) inputs->clear(); if (outputs) outputs->clear();
     try {
-        RtMidiIn in(RtMidi::MACOSX_CORE); RtMidiOut out(RtMidi::MACOSX_CORE);
+        RtMidiIn in(faeditor::midiApi()); RtMidiOut out(faeditor::midiApi());
         if (inputs) for (unsigned i=0;i<in.getPortCount();++i) { const auto n=QString::fromStdString(in.getPortName(i)); inputs->push_back({int(i),n,nameIsDawControl(n),nameLooksLikeFa(n)}); }
         if (outputs) for (unsigned i=0;i<out.getPortCount();++i) { const auto n=QString::fromStdString(out.getPortName(i)); outputs->push_back({int(i),n,nameIsDawControl(n),nameLooksLikeFa(n)}); }
         return true;

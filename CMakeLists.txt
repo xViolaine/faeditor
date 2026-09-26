@@ -46,6 +46,12 @@ endif()
 
 qt_standard_project_setup(REQUIRES 6.5)
 
+if(MSVC)
+    # Sources contain UTF-8 text (e.g. em dashes); large generated QML caches need /bigobj.
+    add_compile_options(/utf-8 /bigobj)
+    add_compile_definitions(NOMINMAX)
+endif()
+
 if(IOS)
     include(cmake/IosRtMidi.cmake)
 else()
@@ -58,7 +64,10 @@ FetchContent_Declare(
 )
 set(RTMIDI_BUILD_STATIC_LIBS ON CACHE BOOL "" FORCE)
 set(RTMIDI_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(RTMIDI_API_CORE ON CACHE BOOL "" FORCE)
+set(RTMIDI_API_CORE ${APPLE} CACHE BOOL "" FORCE)
+if(WIN32)
+    set(RTMIDI_API_WINMM ON CACHE BOOL "" FORCE)
+endif()
 FetchContent_MakeAvailable(rtmidi)
 
 endif()
@@ -338,6 +347,14 @@ elseif(APPLE)
         )
     else()
         message(WARNING "macdeployqt not found; Release/Archive builds will be incomplete for TestFlight")
+    endif()
+endif()
+
+if(WIN32)
+    # Windowed GUI app (no console window) with the FA icon embedded in the .exe.
+    set_target_properties(${APP_TARGET} PROPERTIES WIN32_EXECUTABLE TRUE)
+    if(FAEDITOR_PRODUCT STREQUAL "FA")
+        target_sources(${APP_TARGET} PRIVATE resources/icons/FAEditor.rc)
     endif()
 endif()
 

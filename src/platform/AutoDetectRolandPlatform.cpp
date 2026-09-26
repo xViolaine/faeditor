@@ -1,6 +1,7 @@
 #include "platform/AutoDetectRolandPlatform.h"
 #include "midi/SysexEngine.h"
 #include <RtMidi.h>
+#include "midi/MidiApi.h"
 
 AutoDetectRolandPlatform::AutoDetectRolandPlatform(SysexEngine *e):m_engine(e),m_fa(e),m_fantom(e){select(Family::FA);}
 InstrumentPlatform *AutoDetectRolandPlatform::active(){return m_family==Family::Fantom0?static_cast<InstrumentPlatform*>(&m_fantom):static_cast<InstrumentPlatform*>(&m_fa);}
@@ -13,8 +14,8 @@ bool AutoDetectRolandPlatform::midiConnectionHealthy()const{return m_engine&&m_e
 bool AutoDetectRolandPlatform::discoverMidiPorts(QVector<MidiPort>*ins,QVector<MidiPort>*outs,QString*error)
 {
     m_lastInputs.clear();m_lastOutputs.clear();
-    try{RtMidiIn in(RtMidi::MACOSX_CORE);RtMidiOut out(RtMidi::MACOSX_CORE);
-        auto make=[](int i,const QString&n){auto u=n.toUpper();const bool daw=u.contains("DAW")||u.contains("CTRL");const bool match=!daw&&((u.contains("ROLAND")&&u.contains("FA"))||u.contains("FA-06")||u.contains("FA-07")||u.contains("FA-08")||u.contains("FANTOM-06")||u.contains("FANTOM-07")||u.contains("FANTOM-08"));return MidiPort{i,n,daw,match};};
+    try{RtMidiIn in(faeditor::midiApi());RtMidiOut out(faeditor::midiApi());
+        auto make=[](int i,const QString&n){auto u=n.toUpper();const bool daw=u.contains("DAW")||u.contains("CTRL")||u.startsWith("MIDIIN2")||u.startsWith("MIDIOUT2");const bool match=!daw&&((u.contains("ROLAND")&&u.contains("FA"))||u.contains("FA-06")||u.contains("FA-07")||u.contains("FA-08")||u.contains("FANTOM-06")||u.contains("FANTOM-07")||u.contains("FANTOM-08"));return MidiPort{i,n,daw,match};};
         for(unsigned i=0;i<in.getPortCount();++i)m_lastInputs.push_back(make(int(i),QString::fromStdString(in.getPortName(i))));
         for(unsigned i=0;i<out.getPortCount();++i)m_lastOutputs.push_back(make(int(i),QString::fromStdString(out.getPortName(i))));
         if(ins)*ins=m_lastInputs;if(outs)*outs=m_lastOutputs;return true;
