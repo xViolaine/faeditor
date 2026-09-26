@@ -60,10 +60,12 @@ def main() -> None:
 
     qt_root = outdir / version / arch.removeprefix("win64_")
     if not (qt_root / "bin").is_dir():
-        found = [str(p.parent) for p in outdir.glob(f"{version}/*/bin")]
+        found = sorted(str(p.parent) for p in outdir.rglob("qmake*.exe"))
+        found += sorted(str(p.parent) for p in outdir.rglob("Qt6CoreConfig.cmake"))
         if not found:
-            sys.exit(f"Qt bin folder not found under {outdir / version}")
-        qt_root = Path(found[0])
+            tree = sorted(str(p.relative_to(outdir)) for p in outdir.glob("*/*/*"))[:60]
+            sys.exit(f"Qt bin folder not found under {outdir}; archives={archives[:20]}; tree={tree}")
+        qt_root = Path(found[0]).parent
     # Make the install relocatable for qmake/qtpaths users.
     (qt_root / "bin" / "qt.conf").write_text("[Paths]\nPrefix=..\n")
     print(qt_root.as_posix())
