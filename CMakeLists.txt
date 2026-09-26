@@ -106,6 +106,7 @@ if(FAEDITOR_PRODUCT STREQUAL "FA")
     src/model/FantomSceneModel.cpp
     src/model/MfxPresetStore.cpp
     src/project/ProjectStore.cpp
+    src/project/SvdStudioSetOrder.cpp
     src/undo/UndoController.cpp
     )
 else()
@@ -181,6 +182,7 @@ if(FAEDITOR_PRODUCT STREQUAL "FA")
         qml/views/AboutDialog.qml
         qml/views/HelpDialog.qml
         qml/views/SvdImportPanel.qml
+        qml/views/StudioSetReorderDialog.qml
         qml/views/FantomSceneView.qml
         RESOURCES
         resources/tones/soundlist.json
@@ -493,3 +495,11 @@ qt_add_executable(FAEditorSvdImportTests
 target_include_directories(FAEditorSvdImportTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 target_link_libraries(FAEditorSvdImportTests PRIVATE Qt6::Core Qt6::Gui Qt6::Test)
 add_test(NAME FAEditorSvdImportTests COMMAND FAEditorSvdImportTests)
+
+qt_add_executable(FAEditorSvdReorderTests
+    tests/test_svd_reorder.cpp
+    src/project/SvdStudioSetOrder.cpp
+)
+target_include_directories(FAEditorSvdReorderTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(FAEditorSvdReorderTests PRIVATE Qt6::Core Qt6::Test)
+add_test(NAME FAEditorSvdReorderTests COMMAND FAEditorSvdReorderTests)

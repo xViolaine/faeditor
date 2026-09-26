@@ -58,6 +58,23 @@ FANTOM writes target documented Temporary Scene/Tone areas only.
 3. Tab **1. Sets & Tones**: pick a User/Preset slot from the **FA Set** dropdown (top bar) to recall it, select a part (left), click a tone to assign (right; icon previews). Optional **Scan** for User names. Local projects are in the **Library** tab.
 4. **Mixer**, **Effects**, and **Tone** edit Temporary data on the FA. **Push Temp** for a full Temporary rewrite. To keep a **User** slot permanently, use **Write** on the FA itself (SysEx only edits Temporary).
 
+## Reorder User Studio Sets
+
+The FA has no SysEx command that stores into a User Studio Set slot, so slots are
+rearranged in an SD-card backup instead:
+
+1. On the FA, back up to the SD card and copy the `.SVD` file to your computer.
+2. **File → Reorder User Studio Sets (SVD Backup)…**, open the backup, then drag sets
+   by their ≡ handle, use ▲/▼ (Alt+Up/Down), **Move** or **Swap** to a slot number,
+   or **Used Sets to Top** to close gaps.
+3. **Save Reordered Backup…** writes a *new* file (default `REORDER.SVD`). Copy it to
+   the backup folder on the SD card and use Restore on the FA.
+
+Only whole records are moved: each Studio Set together with its per-slot companion
+record, and Favorites that point at a User Studio Set are renumbered to follow it.
+Everything else in the backup is kept byte-for-byte, and the result is re-read and
+checked before it is saved. Keep the original backup — restoring it undoes the change.
+
 ## DAW export
 
 - **File → Export Current Studio Set as MIDI…** writes a Standard MIDI File type 1 with a conductor track and 16 named part tracks. Each part carries its MIDI channel, Bank Select MSB/LSB, Program Change, volume, pan, chorus send, and reverb send. Import the file into a DAW and route the resulting tracks to the FA MIDI port.

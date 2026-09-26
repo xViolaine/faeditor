@@ -8,6 +8,7 @@
 #include "model/AudioFxModel.h"
 #include "model/TemporaryToneModel.h"
 #include "model/SvdImportModel.h"
+#include "project/SvdStudioSetOrder.h"
 #include "model/FantomSceneModel.h"
 #include "project/ProjectStore.h"
 #include "undo/UndoController.h"
@@ -32,6 +33,7 @@ class AppController : public QObject
     Q_PROPERTY(TemporaryToneModel *tone READ tone CONSTANT)
     Q_PROPERTY(ProjectStore *library READ library CONSTANT)
     Q_PROPERTY(SvdImportModel *svdImport READ svdImport CONSTANT)
+    Q_PROPERTY(SvdStudioSetOrderModel *studioSetOrder READ studioSetOrder CONSTANT)
     Q_PROPERTY(UndoController *undo READ undo CONSTANT)
     Q_PROPERTY(FantomSceneModel *scene READ scene CONSTANT)
     Q_PROPERTY(bool fantomDevice READ fantomDevice NOTIFY deviceFamilyChanged)
@@ -55,6 +57,7 @@ public:
     TemporaryToneModel *tone() const { return m_tone; }
     ProjectStore *library() const { return m_library; }
     SvdImportModel *svdImport() const { return m_svdImport; }
+    SvdStudioSetOrderModel *studioSetOrder() const { return m_studioSetOrder; }
     UndoController *undo() const { return m_undo; }
     FantomSceneModel *scene() const{return m_scene;}
     bool fantomDevice() const;
@@ -126,6 +129,7 @@ private:
     TemporaryToneModel *m_tone = nullptr;
     ProjectStore *m_library = nullptr;
     SvdImportModel *m_svdImport = nullptr;
+    SvdStudioSetOrderModel *m_studioSetOrder = nullptr;
     FantomSceneModel *m_scene = nullptr;
     QTimer m_autosaveTimer;
     QTimer m_foregroundReconnectTimer;

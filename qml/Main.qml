@@ -48,6 +48,7 @@ ApplicationWindow {
             Action { text: "Refresh Library"; onTriggered: App.library.refresh() }
             MenuSeparator {}
             Action { text: "Import Roland SVD…"; onTriggered: svdFileDialog.open() }
+            Action { text: "Reorder User Studio Sets (SVD Backup)…"; onTriggered: studioSetReorder.open() }
             MenuSeparator {}
             Action { text: "Export Current Studio Set as MIDI…"; onTriggered: studioSetMidiDialog.open() }
             Action { text: "Export FA Tone Names (.midnam)…"; onTriggered: midnamDialog.open() }
@@ -111,6 +112,10 @@ ApplicationWindow {
         defaultSuffix: "midnam"
         currentFile: "Roland_FA.midnam"
         onAccepted: App.exportToneNamesMidnam(selectedFile)
+    }
+
+    StudioSetReorderDialog {
+        id: studioSetReorder
     }
 
     MessageDialog {

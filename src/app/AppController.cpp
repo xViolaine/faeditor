@@ -37,6 +37,7 @@ AppController::AppController(QObject *parent)
     }
     m_library = new ProjectStore(m_studioSet, m_audioFx, m_tone, this);
     m_svdImport = new SvdImportModel(m_platform, m_studioSet, this);
+    m_studioSetOrder = new SvdStudioSetOrderModel(this);
     m_scene = new FantomSceneModel(m_platform, this);
     connect(m_svdImport, &SvdImportModel::tonePushed, this,
             [this](const QString &name, int part) {

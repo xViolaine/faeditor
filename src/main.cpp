@@ -26,6 +26,7 @@
 #include "model/MfxUiHelpers.h"
 #include "midi/MidiDeviceModel.h"
 #include "project/ProjectStore.h"
+#include "project/SvdStudioSetOrder.h"
 #include "undo/UndoController.h"
 #endif
 
@@ -116,6 +117,8 @@ int main(int argc, char *argv[])
                                                 QStringLiteral("Obtained from AppController"));
     qmlRegisterUncreatableType<ProjectStore>("FAEditor", 1, 0, "ProjectStore",
                                              QStringLiteral("Obtained from AppController"));
+    qmlRegisterUncreatableType<SvdStudioSetOrderModel>("FAEditor", 1, 0, "SvdStudioSetOrderModel",
+                                                   QStringLiteral("Use App.studioSetOrder"));
     qmlRegisterUncreatableType<UndoController>("FAEditor", 1, 0, "UndoController",
                                                QStringLiteral("Obtained from AppController"));
     qmlRegisterUncreatableType<AppController>("FAEditor", 1, 0, "AppController",

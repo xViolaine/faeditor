@@ -87,6 +87,22 @@ The fixture itself is private test data and is not committed.
 | `MCCaMI73` | 16 | 26 | Unknown |
 | `PRXaMI73` | 512 | 392 | Unknown |
 
+## User Studio Set reordering
+
+Observations from a second FA-08 backup (164 of 512 User slots in use), used by the
+Studio Set reorder feature:
+
+| Area | Observation | Confidence |
+| --- | --- | --- |
+| `PRFbMI73` | Entry *n* is User Studio Set *n+1*; the name is the first 16 × 7-bit ASCII characters. All 512 names decode, unused slots read `INIT STUDIO`. | Verified |
+| `PRXaMI73` | One companion record per User slot: identical for every `INIT STUDIO` slot and varying only among used slots, so it is moved together with its Studio Set. | Observed |
+| `VISaMI73` | Favorites. Bits 0–2 kind, then Bank MSB, Bank LSB and Program (7 bits each). Entries with MSB 85 / LSB 0–3 select User Studio Set `LSB × 128 + PC + 1` and are renumbered when sets move; the remaining bits are preserved. | Observed |
+
+Reordering moves whole records only; no Studio Set parameter is decoded or rewritten.
+The result must be byte-identical to the source outside these three areas, and
+applying the inverse order must reproduce the original file exactly (checked on the
+real backup with 50 random orders).
+
 ## SVD0 comparison fixture
 
 The private comparison file `DANCEKIT.SVD` has SHA-256
