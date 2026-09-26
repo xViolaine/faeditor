@@ -38,6 +38,12 @@ jobs:
         run: |
           python -m pip install --quiet aqtinstall
           echo "::notice::aqtinstall $(python -m aqt version 2>&1 | head -1)"
+          for H in windows_x86 windows_x64 all_os; do
+            L=$(curl -sfL "https://download.qt.io/online/qtsdkrepository/$H/desktop/" | grep -oE 'href="[^"]*qt6_611[^"]*"' | tr '\n' ' ')
+            echo "::notice::$H/desktop -> ${L:-none}"
+          done
+          L=$(curl -sfL "https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt6_6111/" | grep -oE 'href="[^"]*"' | tr '\n' ' ' | cut -c1-900)
+          echo "::notice::windows_x86/desktop/qt6_6111 -> ${L:-none}"
           LIST=$(python -m aqt list-qt windows desktop --arch "$QT_VERSION" 2>&1) || true
           echo "::notice::Qt $QT_VERSION packages: $(echo $LIST | tr '\n' ' ' | cut -c1-900)"
           # Pick the 64-bit MSVC build (e.g. win64_msvc2022_64) whatever its exact name.
