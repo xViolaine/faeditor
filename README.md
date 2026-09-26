@@ -70,7 +70,6 @@ rearranged in an SD-card backup instead:
 3. **Save Reordered Backup…** writes a *new* backup pair (default `REORDER.SVD` plus
    `REORDER.BIN`). Copy **both** files to the backup folder on the SD card and use
    Restore on the FA — the FA reports a read error if the `.BIN` partner is missing.
-   Keep names to 8 characters.
 
 Only whole records are moved: each Studio Set together with its per-slot companion
 record, and Favorites that point at a User Studio Set are renumbered to follow it.

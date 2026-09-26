@@ -527,8 +527,6 @@ bool SvdStudioSetOrderModel::saveFile(const QUrl &url)
         return false;
     }
     const QString binPath = companionBinPath(path);
-    if (QFileInfo(binPath).completeBaseName().size() > 8)
-        qWarning("FA backup names longer than 8 characters may not be listed on the FA");
     const QByteArray bin = companionBinData();
     QSaveFile f(path);
     if (!f.open(QIODevice::WriteOnly) || f.write(out) != out.size() || !f.commit()) {
